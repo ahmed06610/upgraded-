@@ -1,0 +1,117 @@
+﻿@model School.Models.Student
+@using School.Models
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm("Edit", "Students", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4>Student</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.StudentId)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.gender, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select data-model-studentid="@Model.StudentId"
+                    name="gender"
+                    class="form form-control"
+                    onchange="UpdateGender(this)">
+                @foreach (GenderType x in Enum.GetValues(typeof(GenderType)))
+                {
+                    if (Model.gender == x)
+                    {
+                        <option selected value="@x">
+                            @x
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@x">
+                            @x
+                        </option>
+
+                    }
+
+                }
+
+            </select>
+            @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @*
+            <div class="form-group">
+            @Html.LabelFor(model => model.EnrollmentDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+
+                @Html.EditorFor(model => model.EnrollmentDate, new { htmlAttributes = new { @class = "datepicker", autocomplete = "off" } })
+
+                @Html.ValidationMessageFor(model => model.EnrollmentDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    *@
+
+<div class="form-group">
+    @Html.LabelFor(model => model.EnrollmentDate, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        <input type="datetime" name="EnrollmentDate" value="@Convert.ToDateTime(Model.EnrollmentDate).ToString("dd MMM yyyy")" />
+        @Html.ValidationMessageFor(model => model.EnrollmentDate, "", new { @class = "text-danger" })
+    </div>
+</div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.ImagePath, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @*            @Html.EditorFor(model => model.ImagePath, new { htmlAttributes = new { @class = "form-control" } })
+            *@            @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+            {
+                @Html.EditorFor(model => model.ImagePath, new { htmlAttributes = new { @class = "form-control" } })
+            }
+            else
+            {
+                <input id="imagePath" title="Upload images" type="file" name="file" />
+
+            }
+            @Html.ValidationMessageFor(model => model.ImagePath, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-success" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

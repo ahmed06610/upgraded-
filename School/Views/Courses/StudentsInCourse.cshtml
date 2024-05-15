@@ -1,0 +1,159 @@
+﻿@model IEnumerable<School.Models.Enrollment>
+
+@using School.Models
+
+@{
+    ViewBag.Title = "Students In Course";
+}
+
+<h2>Students In @Request.QueryString["CourseTitle"]       </h2>
+<div class="nav">
+    <a href="#cards" class="glyphicon glyphicon-minus" style="color:black; text-decoration:none"></a>
+    &nbsp;
+    <a href="#cards" class="glyphicon glyphicon-list" style="color: black; text-decoration: none"></a>
+
+
+
+</div>
+
+<div class="row" id="cards">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img src="~/Content/Images/Students/@Url.Content(item.Student.ImagePath)"
+                     style="width:200px;height:200px" alt="...">
+                <div class="caption">
+
+                    <a href="/Students/Details/@Url.Content(item.StudentId.ToString())">
+                        <h3 style="text-align:center">
+                            @item.Student.FullName
+                            @* @Html.ActionLink(@item.Student.FullName, "Details", "Students", new { id = item.StudentId.ToString() },null)*@
+                        </h3>
+                    </a>
+
+
+
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div id="tab">
+
+    <table class="table">
+        <tr>
+            <th>
+                Full Name
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Grade
+            </th>
+        </tr>
+        @foreach (var enrollment in Model)
+        {
+            <tr>
+                <td>
+                    <a href="/Students/Details/@Url.Content(enrollment.StudentId.ToString())">@enrollment.Student.FullName</a>
+                </td>
+                <td>
+                    <select data-model-studentid="@enrollment.StudentId"
+                            onchange="UpdateGender(this)">
+                        @foreach (GenderType x in Enum.GetValues(typeof(GenderType)))
+                        {
+                            if (enrollment.Student.gender == x)
+                            {
+                                <option selected value="@x">
+                                    @x
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@x">
+                                    @x
+                                </option>
+
+                            }
+
+                        }
+
+                    </select>
+
+                </td>
+
+                <td>
+                    <input type="number"
+                           data-model-enrollmentid="@enrollment.EnrollmentId"
+                           data-inital-value="@enrollment.Grade"
+                           value="@enrollment.Grade" onblur="UpdateGrade(this)" />
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<script>
+
+
+    function UpdateGrade(obj) {
+
+        var ele = $(obj);
+        var enrollmentid = ele.data("model-enrollmentid");
+        var grade = ele.val()
+
+        var url = "/Enrollments/UpdateGrade?enrollmentid=" + enrollmentid + "&grade=" + grade;
+        $.ajax({
+            url: url,
+            type: "POST",
+
+            success: function (result) {
+                if (result.success) {
+
+                }
+                else {
+
+                }
+
+            },
+
+            error: function (result) {
+                ele.val(ele.data("inital-value"));
+            }
+
+        })
+    };
+
+    function UpdateGender(obj) {
+
+        var ele = $(obj);
+        var studentid = ele.data("model-studentid");
+        var gender = ele.val()
+
+        var url = "/Students/UpdateGender?studentid=" + studentid + "&gender=" + gender;
+        $.ajax({
+            url: url,
+            type: "POST",
+
+            success: function (result) {
+                if (result.success) {
+
+                }
+                else {
+
+                }
+
+            },
+
+            error: function (result) {
+
+            }
+
+        })
+    };
+
+
+
+</script>
+

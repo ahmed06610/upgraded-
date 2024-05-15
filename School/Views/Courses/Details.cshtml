@@ -1,0 +1,67 @@
+﻿@model School.Models.Course
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Course</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Credits)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Credits)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+<div id="accordion">
+   
+        <div class="group">
+            <h3>@Model.Title</h3>
+            <div>
+                @foreach (var item in Model.Enrollments)
+                {
+                    <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                            <img src="~/Content/Images/Students/@Url.Content(item.Student.ImagePath)"
+                                 style="width:200px;height:200px" alt="...">
+                            <div class="caption">
+
+                                <a href="/Students/Details/@Url.Content(item.StudentId.ToString())">
+                                    <h3 style="text-align:center">
+                                        @item.Student.FullName
+                                        @* @Html.ActionLink(@item.Student.FullName, "Details", "Students", new { id = item.StudentId.ToString() },null)*@
+                                    </h3>
+                                </a>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    
+
+
+</div>
+

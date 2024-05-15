@@ -1,0 +1,91 @@
+﻿@model School.Models.Student
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <div style="display:inline-block; ">
+        <span >
+            @if (!string.IsNullOrWhiteSpace(Model.ImagePath))
+            {
+                <img width="120" height="100"
+                     src="~/Content/images/Students/@Url.Content(Model.ImagePath)" alt="image of student" />
+            }
+        </span>
+    </div>
+    <div style="display:inline-block">
+        <dl class="dl-horizontal" >
+            <dt>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.EnrollmentDate)
+            </dt>
+
+            <dd>
+                @Convert.ToDateTime(Model.EnrollmentDate).ToString("dd MMM yyyy hh:mm tt")
+            </dd>
+
+        </dl>
+    </div>
+</div>
+
+<br />
+<table class="table table-condensed table-responsive">
+    <tr>
+        <td>
+            Course Title
+        </td>
+        <td>
+            Credits
+        </td>
+        <td>
+            Grades
+        </td>
+    </tr>
+
+    @foreach (var item in Model.Enrollments)
+    {
+        <tr>
+            <td>
+                @item.Course.Title
+            </td>
+            <td>
+                @item.Course.Credits
+            </td>
+            <td>
+                @item.Grade
+            </td>
+        </tr>
+
+    }
+</table>
+
+
+@foreach (var item in Model.Enrollments)
+{
+    @Html.Partial("_CourseSummry",item)
+}
+
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.StudentId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

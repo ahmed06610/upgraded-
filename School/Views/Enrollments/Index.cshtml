@@ -1,0 +1,120 @@
+﻿@model IEnumerable<School.Models.Enrollment>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+<script type="text/javascript">
+    toastr.success("Deleted!")
+</script>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-success" id="myTable" >
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Course.Title)
+            </th>
+            <th>
+                @* @Html.DisplayNameFor(model => model.Student.FirstName)*@
+                FullName
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Grade)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Course.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Student.FullName)
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.EnrollmentId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.EnrollmentId }) |
+                    @* @Html.ActionLink("Delete", "Delete", new { id = item.EnrollmentId })*@
+
+                    <a class="btn btn-danger" data-model-id="@item.EnrollmentId" onclick="Delete(this)"> Delete AJAX </a>
+
+
+                    <script>
+
+
+                        function Delete(obj) {
+                            toastr.options = {
+                                "closeButton": false,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": false,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "5000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+
+                            swal({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning'
+                            }).then((result) => {
+                                if (result) {
+                                    var ele = $(obj);
+                                    var Id = ele.data("model-id");
+                                    var url = "/Enrollments/DeleteConfirmedJSON/" + Id;
+                                    $.ajax({
+                                        url: url,
+                                        type: "POST",
+
+                                        success: function () {
+
+                                            ele.closest("tr").remove();
+                                        },
+
+                                        error: function () {
+                                            toastr.error('Failed!');
+                                        }
+
+                                    });
+
+                                    toastr["success"]("Deleted");
+
+                                }
+                            })
+
+                        };
+
+                    </script>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

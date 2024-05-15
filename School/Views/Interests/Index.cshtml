@@ -1,0 +1,73 @@
+﻿@model List<School.Models.Course>
+
+@using School.Controllers
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table class="table table-condensed">
+    <tr>
+        <th>
+            I Like This
+        </th>
+        <th>
+            Course Title
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+
+        <tr>
+            <td class="col-md-1">
+                @if (!((InterestsController)this.ViewContext.Controller).IsChosen(item.CourseId))
+                {
+                    <input type="checkbox" name="ID" id="@item.CourseId" data-model-id="@item.CourseId"
+                           onclick="triggerLink(this)" />
+                }
+                else
+                {
+                    <input type="checkbox" name="ID" id="@item.CourseId" data-model-id="@item.CourseId"
+                           onclick="triggerLink(this)" checked />
+                }
+            </td>
+            <td>  @Html.DisplayFor(m => item.Title)  </td>
+        </tr>
+    }
+</table>
+
+
+
+<script>
+    function triggerLink(obj) {
+
+        var status = false;
+        if (obj.checked) {
+            status = true;
+        }
+
+        var ele = $(obj);
+        var Id = ele.data("model-id");
+        var url = "/Interests/AddRemoveInterestJSON?courseid=" + Id + "&status=" + status;
+        $.ajax({
+            url: url,
+            type: "POST",
+
+            success: function () {
+
+
+            },
+
+            error: function () {
+
+            }
+
+        });
+    }
+</script>
+

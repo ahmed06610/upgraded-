@@ -1,0 +1,145 @@
+﻿@model IEnumerable<School.Models.Trainer>
+@using School.Controllers
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AspNetUser.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Department.DepartmentName)
+        </th>
+        <th>
+            Download CV
+        </th>
+        <th>
+            Interests
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AspNetUser.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department.DepartmentName)
+            </td>
+            <td>
+                @if (item.ResumePath != null)
+                {
+                @Html.ActionLink("Download CV", "DownloadCV", "Trainers", new { fileName = @item.ResumePath }, new { @target = "_blank" })
+                }
+            </td>
+            <td>
+                @(((TrainersController)this.ViewContext.Controller).GetInterests(item.TrainerId))
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.TrainerId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.TrainerId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.TrainerId })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+    google.load("visualization", "1", { packages: ["corechart"] });
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        $.ajax({
+            type: "POST",
+            url: "/Trainers/DrawCoursesInterestsGoogleChart",
+            data: '{}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (r) {
+                var data = new google.visualization.DataTable();
+
+                // Setting.
+                data.addColumn('string', 'Course');
+                data.addColumn('number', 'Number Of Trainers');
+
+                var arr = new Array();
+                // Processing.
+                for (var i = 0; i < r.length; i++) {
+
+                    data.addRow([r[i].Course, r[i].Number_Of_Trainers]);
+                    arr[i] = r[i].Course;
+                }
+
+                var options = {
+                    title: 'Trainers Interests Per Course'
+                };
+
+                // var chart = new google.visualization.PieChart($("#chart")[0]);
+                var chart = new google.visualization.BarChart($("#chart")[0]);
+
+                chart.draw(data, options);
+
+                
+                google.visualization.events.addListener(chart, 'select', selectHandler);
+
+                function selectHandler(e) {
+                    var selection = chart.getSelection();
+                    var message = '';
+                    for (var i = 0; i < selection.length; i++) {
+                        var item = selection[i];
+                        if (item.row != null && item.column != null) {
+                            var str = data.getValue(item.row, item.column);
+                            window.location = "../Courses/GetIdCourse?coursename="+ arr[item.row];
+                            message += '{row:' + arr[item.row] + ',column:' + item.column + '} = ' + str + '\n';
+                        } else if (item.row != null) {
+                            var str = data.getFormattedValue(item.row, 0);
+                            message += '{row:' + item.row + ', column:none}; value (col 0) = ' + str + '\n';
+                        } else if (item.column != null) {
+                            var str = data.getFormattedValue(0, item.column);
+                            message += '{row:none, column:' + item.column + '}; value (row 0) = ' + str + '\n';
+                        }
+                    }
+                    if (message == '') {
+                        message = 'nothing';
+                    }
+
+                    
+                }
+                
+            },
+            failure: function (r) {
+                alert(r.d);
+            },
+            error: function (r) {
+                alert(r.d);
+            }
+        });
+    }
+</script>
+<div id="chart" style="width: 900px; height: 500px;">
+
+</div>

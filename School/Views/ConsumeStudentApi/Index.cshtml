@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@Html.ActionLink("Index", "index", "Students")
+
+<table class="table table-condensed" id="students">
+    <tr>
+        <td>  Student ID  </td>
+        <td>  First Name  </td>
+        <td>  Last Name  </td>
+        <td>  Enrollment Date </td>
+        <td></td>
+
+    </tr>
+</table>
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+
+<script>
+    $(function () {
+        loadData();
+    });
+
+    function loadData() {
+
+        $.getJSON('https://localhost:44339//api/students?contain=e').then(function (data) {
+            console.log(data);
+
+            $('#students').children('tr:not(:first)').remove();
+
+            $.each(data, function (index, item) {
+                $('#students tr:last').after(`
+                <tr>
+                    <td>  ${item.StudentId}  </td >
+                    <td>  ${item.FirstName}  </td >
+                    <td>  ${item.LastName}   </td>
+                    <td>  ${item.EnrollmentDate}  </td>
+                    <td>
+                        <a href="javascript:deleteStudent(${item.StudentId})"> Delete</a>
+                    </td >
+                </tr >`);
+            });
+        });
+
+    };
+
+    function deleteStudent(id) {
+
+        $.ajax({ url: `https://localhost:44353/api/students/${id}`, type: 'DELETE' }).then(function () {
+
+
+            location.reload();
+        });
+    }
+</script>
+
+

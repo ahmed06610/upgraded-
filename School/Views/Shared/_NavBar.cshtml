@@ -1,0 +1,60 @@
+﻿@using School.Models
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    <div class="container">
+        @Html.ActionLink("School", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+            <ul class="navbar-nav flex-grow-1">
+                @if (User.IsInRole(RoleName.Manager))
+                {
+                   
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Management
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/Departments/Index">Departments</a></li>
+                            <li><a class="dropdown-item" href="/Trainers/Index">Trainers</a></li>
+
+
+
+
+
+
+                            <li class="dropdown-divider"></li>
+                            <li> <a class="dropdown-item" href="/Courses/Index">Courses</a></li>
+                            <li>  <a class="dropdown-item" href="/Students/Index">Students</a></li>
+                            <li><a class="dropdown-item" href="/Enrollments/Index">Enrollments</a></li>
+                            <li class="has-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#"> Top Students </a>
+                                <div class="megasubmenu dropdown-menu">
+                                    @Html.Partial("_TopStudentsMegaMenu")
+                                </div>
+                            </li>
+                            <li class="dropdown-divider"></li>
+
+                            <li> <a class="dropdown-item" href="/Courses/IndexMultipleRecords">All Courses</a></li>
+
+
+                        </ul>
+                    </li>
+                }
+                @if (User.IsInRole(RoleName.Trainer))
+                {
+                    <li>@Html.ActionLink("Interests", "Index", "Interests", new { area = "" }, new { @class = "nav-link" })</li>
+                }
+
+                </ul>
+
+            @if (User.IsInRole(RoleName.Manager))
+            {
+                @Html.Partial("_Search")
+            }
+
+                @Html.Partial("_LoginPartial")
+            </div>
+    </div>
+</nav>

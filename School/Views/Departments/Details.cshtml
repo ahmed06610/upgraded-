@@ -1,0 +1,53 @@
+﻿@model School.Models.Department
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Department</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DepartmentName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DepartmentName)
+        </dd>
+
+    </dl>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.DepartmentId }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+    <br />
+    <table class="table table-condensed table-responsive">
+        <tr>
+            <td>First Name</td>
+            <td>Last Name</td>
+        </tr>
+
+        @foreach (var item in Model.Trainers)
+        {
+            <tr>
+                <td>
+                    @item.FirstName
+                </td>
+                <td>
+                    @item.LastName
+                </td>
+            </tr>
+
+        }
+    </table>
+
+    @foreach (var course in Model.Courses)
+    {
+        @Html.Partial("_CoursesPerDepartment", course)
+    }
+</div>
+
+

@@ -1,0 +1,140 @@
+﻿@model IEnumerable<School.Models.Student>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+<script type="text/javascript">
+    toastr.success("Deleted!")
+</script>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table table-info" id="myTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.gender)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EnrollmentDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImagePath)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.gender)
+                </td>
+                <td>
+                    @*@Html.DisplayFor(modelItem => item.EnrollmentDate)*@
+
+                    @if (!string.IsNullOrWhiteSpace(item.EnrollmentDate.ToString()))
+                    {
+                        @Convert.ToDateTime(item.EnrollmentDate).ToString("dd MMM yyyy");
+                    }
+                </td>
+                <td>
+                    @* @Html.DisplayFor(modelItem => item.ImagePath)*@
+                    @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                    {
+                        <img width="50" height="50"
+                             src="~/Content/images/Students/@Url.Content(item.ImagePath)" alt="image of student" />
+                    }
+
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.StudentId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.StudentId }) |
+                    @* @Html.ActionLink("Delete", "Delete", new { id = item.StudentId })*@
+                    <a class="btn btn-danger" data-model-id="@item.StudentId" onclick="Delete(this)"> Delete AJAX </a>
+
+
+                    <script>
+
+
+                        function Delete(obj) {
+                            toastr.options = {
+                                "closeButton": false,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": false,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "5000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+
+                            swal({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning'
+                            }).then((result) => {
+                                if (result) {
+                                    var ele = $(obj);
+                                    var Id = ele.data("model-id");
+                                    var url = "/Students/DeleteConfirmedJSON/" + Id;
+                                    $.ajax({
+                                        url: url,
+                                        type: "POST",
+
+                                        success: function () {
+
+                                            ele.closest("tr").remove();
+                                        },
+
+                                        error: function () {
+                                            toastr.error('Failed!');
+                                        }
+
+                                    });
+
+                                    toastr["success"]("Deleted");
+
+                                }
+                            })
+
+                        };
+
+                    </script>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>

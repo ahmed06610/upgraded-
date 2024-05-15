@@ -1,0 +1,200 @@
+﻿@model IEnumerable<School.Models.Course>
+
+@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<style>
+    .glyphicon-star {
+        color: gold;
+        text-shadow: 0 0 black,0 0 black,0 0 black,0 0 black,0 0 black;
+    }
+    
+</style>
+
+<h2>Index</h2>
+
+<p>
+    <!-- Button trigger modal -->
+    <a href="@Url.Action("GetPartialNewCourse","Courses")" data-toggle="modal"  data-target="#myModal">Create New Course</a>   
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+
+
+</p>
+
+
+<script>
+
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>
+<script type="text/javascript">
+    toastr.success("Deleted!")
+</script>
+
+<table id='myTable' class="table" >
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Level2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Credits)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rating)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CourseId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CourseLevel.Level)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Credits)
+                </td>
+                <td>
+                    @if (item.Rating != null)
+                    {
+                        for (int i = 0; i < (int)item.Rating; i++)
+                        {
+                            <span class="glyphicon glyphicon-star"></span>
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.CourseId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.CourseId }) |
+                    @* @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })*@
+
+                    <a class="btn btn-danger" data-model-id="@item.CourseId" onclick="Delete(this)"> Delete AJAX </a>
+
+                    <script>
+
+
+                        function Delete(obj) {
+                            toastr.options = {
+                                "closeButton": false,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": false,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "5000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            }
+
+                            swal({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning'
+                            }).then((result) => {
+                                if (result) {
+                                    var ele = $(obj);
+                                    var Id = ele.data("model-id");
+                                    var url = "/Courses/DeleteConfirmedJSON/" + Id;
+                                    $.ajax({
+                                        url: url,
+                                        type: "POST",
+
+                                        success: function () {
+
+                                            ele.closest("tr").remove();
+                                        },
+
+                                        error: function () {
+                                            toastr.error('Failed!');
+                                        }
+
+                                    });
+
+                                    toastr["success"]("Deleted");
+
+                                }
+                            })
+
+                        };
+
+                    </script>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+
+
+@*tabs*@
+<div id="accordion">
+    @foreach (var course in Model)
+    {
+        <div class="group">
+            <h3>@course.Title</h3>
+            <div>
+                @foreach (var item in course.Enrollments)
+                {
+                    <div class="col-sm-6 col-md-4">
+                        <div class="thumbnail">
+                            <img src="~/Content/Images/Students/@Url.Content(item.Student.ImagePath)"
+                                 style="width:200px;height:200px" alt="...">
+                            <div class="caption">
+
+                                <a href="/Students/Details/@Url.Content(item.StudentId.ToString())">
+                                    <h3 style="text-align:center">
+                                        @item.Student.FullName
+                                        @* @Html.ActionLink(@item.Student.FullName, "Details", "Students", new { id = item.StudentId.ToString() },null)*@
+                                    </h3>
+                                </a>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+
+</div>
+<br />
+
+<div>
+    <h3 style="text-align:center">Credits per Course</h3>
+    <img src="@Url.Action("Chart") " style="padding-left:65px" />
+</div>

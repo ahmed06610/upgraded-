@@ -1,0 +1,12 @@
+﻿@using School.Models
+@model CourseStats
+<br />
+<ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        @Html.ActionLink(Model.CourseTitle, "StudentsInCourse", "Courses",new {CourseTitle=Model.CourseTitle},null)
+        <span class="badge badge-primary badge-pill">@Model.CourseEnrollments</span>
+    </li>
+   
+</ul>
+
+

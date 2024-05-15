@@ -1,0 +1,13 @@
+﻿@model School.Models.Enrollment
+
+<div class="panel panel-default">
+    <div class="panel-heading">@Model.Course.Title - @Model.Course.Credits hour(s)</div>
+    <div class="panel-body">
+        Grade: @Model.Grade
+
+        <p>
+            @Html.ActionLink("Edit", "Edit", "Enrollments", new { id = Model.EnrollmentId }, null)
+        </p>
+    </div>
+
+</div>

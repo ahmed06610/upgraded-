@@ -1,0 +1,14 @@
+﻿@model School.Models.Course
+
+<div class="panel panel-default">
+    <div class="panel-heading">@Model.Title</div>
+    <div class="panel-body">
+       @Model.Credits hour(s)
+
+        <p>
+            @Html.ActionLink("Edit", "Edit", "Courses", new { id = Model.CourseId }, null)
+        </p>
+    </div>
+
+</div>
+
